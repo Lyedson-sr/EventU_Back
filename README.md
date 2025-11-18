@@ -17,7 +17,7 @@ Em seguida, edite o arquivo .env.docker:
 ```env
 SECRET_KEY=sua_secret_key_super_segura_aqui
 ALLOWED_HOSTS=hosts_permitidos
-
+DEBUG=sua_opcao_de_debug
 
 POSTGRES_DB=seu_banco
 POSTGRES_HOST=postgres
@@ -26,7 +26,7 @@ POSTGRES_USER=seu_user
 POSTGRES_PASSWORD=sua_senha
 ```
 
-#### 3. Rode o docker compose
+#### 4. Rode o docker compose
 ```bash
 docker compose -f docker-compose.dev.yaml up --build
 ```
@@ -78,7 +78,7 @@ Em seguida, edite o arquivo .env:
 ```env
 SECRET_KEY=sua_secret_key_super_segura_aqui
 ALLOWED_HOSTS=hosts_permitidos
-
+DEBUG=sua_opcao_de_debug
 
 POSTGRES_DB=seu_banco
 POSTGRES_HOST=localhost
