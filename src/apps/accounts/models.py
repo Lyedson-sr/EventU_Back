@@ -26,7 +26,7 @@ class CustomUser(AbstractBaseUser):
     name = CharField(_("name"), max_length=150, null=False, blank=False)
     role = CharField(_("role"), max_length=20, choices=Role.choices, default=Role.STUDENT)
     preferred_calendar_view = CharField(_("preferred calendar view"), max_length=10, choices=CalendarView.choices, default=CalendarView.MONTH)
-    is_active = BooleanField(_("staff status"), default=False)
+    is_active = BooleanField(_("is active"), default=False)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
 
