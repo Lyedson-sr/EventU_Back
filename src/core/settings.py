@@ -33,6 +33,23 @@ DEBUG = os.environ.get("DEBUG", "False")
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split()
 
+# Email
+
+EMAIL_BACKEND =  "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
+
+# Cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379',
+    }
+}
 
 # Application definition
 
