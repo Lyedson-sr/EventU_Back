@@ -6,7 +6,7 @@ class CustomUserManager(BaseUserManager):
     """
     Model de User customizado, para autenticar com email no lugar de username.
     """
-    def create_user(self, email, password, **extra_fields):
+    def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError(_("O Email tem que ser fornecido"))
         email = self.normalize_email(email)

@@ -21,6 +21,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         WEEK = "week", _("Semana")
         MONTH = "month", _("Mês")
         YEAR = "year", _("Ano")
+        
+    is_superuser = None
 
     email = EmailField(_("email"), unique=True)
     name = CharField(_("name"), max_length=150, null=False, blank=False)
