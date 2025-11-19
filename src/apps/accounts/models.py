@@ -5,12 +5,12 @@ from django.db.models import (
     TextChoices,
     DateTimeField,
 )
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser
 from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
 
 
-class CustomUser(AbstractBaseUser, PermissionsMixin):
+class CustomUser(AbstractBaseUser):
     class Role(TextChoices):
         STUDENT = "student", _("Aluno")
         PROFESSOR = "professor", _("Professor")
@@ -21,8 +21,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         WEEK = "week", _("Semana")
         MONTH = "month", _("Mês")
         YEAR = "year", _("Ano")
-        
-    is_superuser = None
 
     email = EmailField(_("email"), unique=True)
     name = CharField(_("name"), max_length=150, null=False, blank=False)

@@ -1,5 +1,12 @@
-from rest_framework.serializers import ModelSerializer, CharField, ValidationError
+from rest_framework.serializers import (
+    ModelSerializer,
+    Serializer,
+    EmailField,
+    CharField,
+    ValidationError,
+)
 from .models import CustomUser
+from .services.activation_services import ActivationService
 
 
 class UserRegistrationSerializer(ModelSerializer):
@@ -19,6 +26,35 @@ class UserRegistrationSerializer(ModelSerializer):
         password = validated_data.pop("password")
         user = CustomUser.objects.create_user(**validated_data)
         user.set_password(password)
+        user.save()
+        return user
+
+
+class UserActivationSerializer(Serializer):
+    email = EmailField()
+    code = CharField(max_length=4, min_length=4)
+
+    def validate(self, attrs):
+        email = attrs.get("email")
+        code = attrs.get("code")
+
+        try:
+            user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            raise ValidationError("Usuário não encontrado.")
+
+        if user.is_active:
+            raise ValidationError("Esta conta já está ativa.")
+
+        if not ActivationService.verify_activation_code(user.id, code):
+            raise ValidationError("Código de ativação inválido ou expirado.")
+
+        attrs["user"] = user
+        return attrs
+
+    def save(self, **kwargs):
+        user = self.validated_data["user"]
+        user.is_active = True
         user.save()
         return user
 
