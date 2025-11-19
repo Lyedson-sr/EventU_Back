@@ -1,15 +1,16 @@
 from django.db.models import (
     EmailField,
     CharField,
+    BooleanField,
     TextChoices,
     DateTimeField,
 )
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
 
 
-class CustomUser(AbstractBaseUser):
+class CustomUser(AbstractBaseUser, PermissionsMixin):
     class Role(TextChoices):
         STUDENT = "student", _("Aluno")
         PROFESSOR = "professor", _("Professor")
@@ -22,9 +23,10 @@ class CustomUser(AbstractBaseUser):
         YEAR = "year", _("Ano")
 
     email = EmailField(_("email"), unique=True)
-    name = CharField(_("name"), max_length=150)
+    name = CharField(_("name"), max_length=150, null=False, blank=False)
     role = CharField(_("role"), max_length=20, choices=Role.choices, default=Role.STUDENT)
-    preferred_calendar_view = CharField(_("preferred_calendar_view"), max_length=10, choices=CalendarView.choices, default=CalendarView.MONTH)
+    preferred_calendar_view = CharField(_("preferred calendar view"), max_length=10, choices=CalendarView.choices, default=CalendarView.MONTH)
+    is_active = BooleanField(_("staff status"), default=False)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
 
