@@ -30,8 +30,9 @@ DEBUG = os.environ.get("DEBUG", "False")
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split()
 
-# Email
+FRONTEND_HOST = os.environ.get("FRONTEND_HOST", "http://localhost:5173")
 
+# Email
 EMAIL_BACKEND =  "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
@@ -62,6 +63,9 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "rest_framework",
     "drf_spectacular",
+    "rest_framework_simplejwt",
+    "drf_standardized_errors",
+    "corsheaders",
 ]
 
 LOCAL_APPS = [
@@ -71,6 +75,7 @@ LOCAL_APPS = [
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -78,6 +83,10 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+CORS_ALLOWED_ORIGINS = [
+    FRONTEND_HOST,
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -171,6 +180,7 @@ AUTHENTICATION_BACKENDS = [
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "EXCEPTION_HANDLER": "drf_standardized_errors.handler.exception_handler",
 }
 
 SPECTACULAR_SETTINGS = {

@@ -7,6 +7,8 @@ from rest_framework.serializers import (
 )
 from .models import CustomUser
 from .services.activation_services import ActivationService
+from .exceptions import InvalidCredentials
+from django.contrib.auth import authenticate
 
 
 class UserRegistrationSerializer(ModelSerializer):
@@ -16,11 +18,6 @@ class UserRegistrationSerializer(ModelSerializer):
         model = CustomUser
         fields = ["email", "name", "role", "password"]
         extra_kwargs = {"role": {"required": True}}
-
-    def validate_email(self, value):
-        if CustomUser.objects.filter(email=value).exists():
-            raise ValidationError("Erro ao cadastrar com esse email.")
-        return value
 
     def create(self, validated_data):
         user = CustomUser.objects.create_user(**validated_data)
@@ -56,6 +53,36 @@ class UserActivationSerializer(Serializer):
         return user
 
 
+class UserLoginSerializer(Serializer):
+    email = EmailField()
+    password = CharField(write_only=True)
+
+    def validate(self, attrs):
+        email = attrs.get("email")
+        password = attrs.get("password")
+
+        user = authenticate(username=email, password=password)
+
+        if not user:
+            raise InvalidCredentials()
+
+        if not user.is_active:
+            raise InvalidCredentials("Conta inativa ou não verificada.")
+        
+        attrs["user"] = user
+        return attrs
+    
+
+class PasswordResetRequestSerializer(Serializer):
+    email = EmailField()
+
+
+class PasswordResetConfirmSerializer(Serializer):
+    email = EmailField()
+    code = CharField()
+    new_password = CharField(write_only=True, min_length=8)
+
+
 class UserSerializer(ModelSerializer):
     class Meta:
         model = CustomUser
@@ -68,3 +95,24 @@ class UserSerializer(ModelSerializer):
             "created_at",
         ]
         read_only_fields = ["id", "created_at"]
+
+
+class MessageResponseSerializer(Serializer):
+    message = CharField()
+
+class TokenResponseSerializer(Serializer):
+    access = CharField()
+    refresh = CharField()
+
+
+class RegisterResponseSerializer(Serializer):
+    message = CharField()
+    data = UserSerializer()
+
+
+class AuthResponseSerializer(Serializer):
+    message = CharField()
+    data = UserSerializer()
+    tokens = TokenResponseSerializer()
+
+
