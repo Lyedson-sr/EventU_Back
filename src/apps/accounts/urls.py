@@ -1,11 +1,18 @@
 from django.urls import path
-from .views import AuthViewSet
-
+from .views import (
+    RegistrationView,
+    ActivateAccountView,
+    LoginView,
+    LogoutView,
+    ForgotPasswordView,
+    ResetPasswordView,
+)
 
 urlpatterns = [
-    path("register/", AuthViewSet.as_view({"post": "register"}), name="user_register"),
-    path("activate-account/", AuthViewSet.as_view({"post": "activate_account"}), name="activate_account"),
-    path("login/", AuthViewSet.as_view({"post": "login"}), name="login"),
-    path("forgot-password", AuthViewSet.as_view({"post": "forgot_password"}), name="forgot_password"),
-    path("reset-password", AuthViewSet.as_view({"post": "reset_password"}), name="reset_password"),
+    path("register/", RegistrationView.as_view(), name="register"),
+    path("activate-account/", ActivateAccountView.as_view(), name="activate-account"),
+    path("login/", LoginView.as_view(), name="login"),
+    path("logout/", LogoutView.as_view(), name="logout"),
+    path("forgot-password/", ForgotPasswordView.as_view(), name="forgot-password"),
+    path("reset-password/", ResetPasswordView.as_view(), name="reset-password"),
 ]

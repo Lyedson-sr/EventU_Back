@@ -1,44 +1,29 @@
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import AllowAny
-from rest_framework.decorators import action
+from django.db import transaction
+from django.utils.translation import gettext_lazy as _
+from rest_framework.generics import CreateAPIView, GenericAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import CustomUser
 from .serializers import (
     UserRegistrationSerializer,
-    UserSerializer,
     UserActivationSerializer,
     UserLoginSerializer,
+    UserLogoutSerializer,
     PasswordResetRequestSerializer,
     PasswordResetConfirmSerializer,
+    UserSerializer,
 )
-from .schemas import auth_schema
 from .services.activation_services import ActivationService
 from .services.password_reset_services import PasswordResetService
+from .models import User
 
 
-@auth_schema
-class AuthViewSet(ModelViewSet):
-    queryset = CustomUser.objects.none()
+class RegistrationView(CreateAPIView):
     permission_classes = [AllowAny]
-    http_method_names = ["post"]
+    serializer_class = UserRegistrationSerializer
 
-    def get_serializer_class(self):
-        if self.action == "register":
-            return UserRegistrationSerializer
-        elif self.action == "activate_account":
-            return UserActivationSerializer
-        elif self.action == "login":
-            return UserLoginSerializer
-        elif self.action == "forgot_password":
-            return PasswordResetRequestSerializer
-        elif self.action == "reset_password":
-            return PasswordResetConfirmSerializer
-        return UserSerializer
-
-    @action(detail=False, methods=["post"])
-    def register(self, request):
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -49,14 +34,19 @@ class AuthViewSet(ModelViewSet):
 
         return Response(
             {
-                "message": "Conta criada com sucesso. Verifique seu email para o código de ativação",
+                "message": _("Conta criada com sucesso. Verifique seu email para ativação."),
                 "data": {"email": user.email, "user_id": user.id},
             },
-            status=status.HTTP_201_CREATED,
+            status=201,
         )
+    
 
-    @action(detail=False, methods=["post"])
-    def activate_account(self, request):
+class ActivateAccountView(CreateAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = UserActivationSerializer
+
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -66,56 +56,43 @@ class AuthViewSet(ModelViewSet):
 
         return Response(
             {
-                "message": "Conta ativada com sucesso.",
+                "message": _("Conta ativada com sucesso."),
                 "data": UserSerializer(user).data,
                 "tokens": {
                     "access": str(refresh.access_token),
                     "refresh": str(refresh),
                 },
-            }
-        )
-    
-    @action(detail=False, methods=["post"])
-    def login(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        user = serializer.validated_data["user"]
-
-        refresh = RefreshToken.for_user(user)
-
-        return Response(
-            {
-                "message": "Login realizado com sucesso.",
-                "data": UserSerializer(user).data,
-                "tokens": {
-                    "access": str(refresh.access_token),
-                    "refresh": str(refresh),
-                }
             },
-            status=status.HTTP_200_OK,
+            status=200,
         )
 
-    @action(detail=False, methods=["post"])
-    def forgot_password(self, request):
+
+class ForgotPasswordView(CreateAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = PasswordResetRequestSerializer
+
+    def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        try:
-            user = CustomUser.objects.get(email=serializer.validated_data["email"])
+        email = serializer.validated_data["email"]
+        user = User.objects.filter(email=email).first()
+
+        if user:
             PasswordResetService.send_reset_email(user)
-        except CustomUser.DoesNotExist:
-            pass
 
         return Response(
-            {
-                "message": "Se o email existir, você receberá um código para redefinir a senha."
-            },
-            status=status.HTTP_200_OK
+            {"message": _("Se o email existir, enviaremos um código de redefinição.")},
+            status=200,
         )
-    
-    @action(detail=False, methods=["post"])
-    def reset_password(self, request):
+
+
+class ResetPasswordView(CreateAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = PasswordResetConfirmSerializer
+
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -126,9 +103,64 @@ class AuthViewSet(ModelViewSet):
                 new_password=serializer.validated_data["new_password"],
             )
         except ValueError as e:
-            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response({"detail": str(e)}, status=400)
+
         return Response(
-            {"message": "Senha redefinida com sucesso."},
-            status=status.HTTP_200_OK
+            {"message": _("Senha redefinida com sucesso.")},
+            status=200,
         )
+    
+
+class LoginView(GenericAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = UserLoginSerializer  
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data) 
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.validated_data["user"]
+
+        if not user.is_active:
+            return Response({"detail": _("Conta não ativada.")}, status=400)
+
+        refresh = RefreshToken.for_user(user)
+
+        return Response(
+            {
+                "message": _("Login realizado com sucesso."),
+                "data": UserSerializer(user).data,
+                "tokens": {
+                    "access": str(refresh.access_token),
+                    "refresh": str(refresh),
+                },
+            },
+            status=200,
+        )
+
+
+class LogoutView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserLogoutSerializer
+
+    def post(self, request, *args, **kwargs):
+        try:
+            refresh_token = request.data.get("refresh_token")
+            if not refresh_token:
+                return Response(
+                    {"detail": "Refresh token é obrigatório."},
+                    status=400
+                )
+            
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response(
+                {"detail": "Logout realizado com sucesso."},
+                status=200
+            )
+        except Exception:
+            return Response(
+                {"detail": "Token inválido."},
+                status=400
+            )
