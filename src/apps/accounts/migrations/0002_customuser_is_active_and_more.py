@@ -11,12 +11,12 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='customuser',
+            model_name='User',
             name='is_active',
             field=models.BooleanField(default=False, verbose_name='staff status'),
         ),
         migrations.AlterField(
-            model_name='customuser',
+            model_name='User',
             name='preferred_calendar_view',
             field=models.CharField(choices=[('day', 'Dia'), ('week', 'Semana'), ('month', 'Mês'), ('year', 'Ano')], default='month', max_length=10, verbose_name='preferred calendar view'),
         ),

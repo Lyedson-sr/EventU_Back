@@ -2,7 +2,7 @@ import random
 from django.core.cache import cache
 from django.core.mail import send_mail
 from django.conf import settings
-from ..models import CustomUser
+from ..models import User
 
 
 class ActivationService:
@@ -30,7 +30,7 @@ class ActivationService:
         return False
     
     @staticmethod
-    def send_activation_email(user: CustomUser, code: str) -> None:
+    def send_activation_email(user: User, code: str) -> None:
         """
         Envia email com código de ativação
         """

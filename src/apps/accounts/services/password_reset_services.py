@@ -1,7 +1,7 @@
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.cache import cache
-from apps.accounts.models import CustomUser
+from ..models import User
 import random
 
 
@@ -16,7 +16,7 @@ class PasswordResetService:
     
     
     @staticmethod
-    def send_reset_email(user: CustomUser) -> None:
+    def send_reset_email(user: User) -> None:
         code = PasswordResetService.generate_reset_code(user.id)
         send_mail(
             subject="Código de redefinição de senha",
@@ -27,10 +27,10 @@ class PasswordResetService:
 
     
     @staticmethod
-    def reset_password(email: str, code: str, new_password: str) -> CustomUser:
+    def reset_password(email: str, code: str, new_password: str) -> User:
         try:
-            user = CustomUser.objects.get(email=email)
-        except CustomUser.DoesNotExist:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
             raise ValueError("Email ou código inválido")
         
         cached_code = cache.get(f"password_reset_{user.id}")
