@@ -8,7 +8,7 @@ load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
+# sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
 
 SYSTEM_NAME = "EventU"
 API_MAJOR = "v1"
@@ -26,7 +26,7 @@ DEBUG = os.environ.get("DEBUG", "False")
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(" ")
 
-AUTH_USER_MODEL = "accounts.User"
+AUTH_USER_MODEL = "users.User"
 
 # Application definition
 
@@ -48,7 +48,8 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "accounts",
+    "apps.users",
+    "apps.authentication",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -164,7 +165,7 @@ CACHES = {
 }
 
 AUTHENTICATION_BACKENDS = [
-    "accounts.authentication.EmailBackend",  
+    "apps.authentication.authentication.EmailBackend",  
     "django.contrib.auth.backends.ModelBackend",
 ]
 

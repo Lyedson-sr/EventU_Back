@@ -1,7 +1,7 @@
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.cache import cache
-from ..models import User
+from apps.users.models import User
 import random
 
 

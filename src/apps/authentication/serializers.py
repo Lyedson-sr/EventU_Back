@@ -5,7 +5,8 @@ from rest_framework.serializers import (
     CharField,
     ValidationError,
 )
-from .models import User
+from apps.users.models import User
+from apps.users.serializers import UserSerializer
 from .services.activation_services import ActivationService
 from django.contrib.auth import authenticate
 
@@ -84,20 +85,6 @@ class PasswordResetConfirmSerializer(Serializer):
     email = EmailField()
     code = CharField()
     new_password = CharField(write_only=True, min_length=8)
-
-
-class UserSerializer(ModelSerializer):
-    class Meta:
-        model = User
-        fields = [
-            "id",
-            "email",
-            "name",
-            "role",
-            "preferred_calendar_view",
-            "created_at",
-        ]
-        read_only_fields = ["id", "created_at"]
 
 
 class MessageResponseSerializer(Serializer):

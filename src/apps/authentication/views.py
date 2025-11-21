@@ -15,7 +15,7 @@ from .serializers import (
 )
 from .services.activation_services import ActivationService
 from .services.password_reset_services import PasswordResetService
-from .models import User
+from apps.users.models import User
 
 
 class RegistrationView(CreateAPIView):
@@ -29,7 +29,7 @@ class RegistrationView(CreateAPIView):
 
         user = serializer.save()
 
-        activation_code = ActivationService.generate_activation_code(user.id)
+        activation_code = ActivationService.generate_activation_code(user)
         ActivationService.send_activation_email(user, activation_code)
 
         return Response(

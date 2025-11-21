@@ -17,8 +17,6 @@ auth_schema = extend_schema_view(
         tags=["auth"],
         responses={
             201: RegisterResponseSerializer,
-            400: OpenApiResponse(description="Dados inválidos"),
-            500: OpenApiResponse(description="Erro interno do servidor"),
         }
     ),
     activate_account=extend_schema(
@@ -27,8 +25,6 @@ auth_schema = extend_schema_view(
         tags=["auth"],
         responses={
             200: AuthResponseSerializer,
-            400: OpenApiResponse(description="Código inválido ou conta já ativa"),
-            404: OpenApiResponse(description="Usuário não encontrado"),
         }
     ),
     login=extend_schema(
@@ -37,7 +33,6 @@ auth_schema = extend_schema_view(
         tags=["auth"],
         responses={
             200: AuthResponseSerializer,
-            401: OpenApiResponse(description="Credenciais inválidas"),
         }
     ),
     forgot_password=extend_schema(
@@ -46,7 +41,6 @@ auth_schema = extend_schema_view(
         tags=["auth"],
         responses={
             200: MessageResponseSerializer,
-            400: OpenApiResponse(description="Erro ao solicitar reset de senha."),
         }
     ),
     reset_password=extend_schema(
@@ -55,7 +49,6 @@ auth_schema = extend_schema_view(
         tags=["auth"],
         responses={
             200: MessageResponseSerializer,
-            400: OpenApiResponse(description="Erro ao processar reset de senha."),
         }
     ),
 )

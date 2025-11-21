@@ -2,17 +2,17 @@ import random
 from django.core.cache import cache
 from django.core.mail import send_mail
 from django.conf import settings
-from ..models import User
+from apps.users.models import User
 
 
 class ActivationService:
     @staticmethod
-    def generate_activation_code(user_id: int) -> str:
+    def generate_activation_code(user: User) -> str:
         """
         Gera código de 6 dígitos e salva no cache por 1h
         """
         code = str(random.randint(1000, 9999))
-        cache_key = f"activation_code_{user_id}"
+        cache_key = f"activation_code_{user.id}"
         cache.set(cache_key, code, timeout=3600)
         return code
     
