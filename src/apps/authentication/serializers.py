@@ -4,6 +4,7 @@ from rest_framework.serializers import (
     EmailField,
     CharField,
     ValidationError,
+    IntegerField,
 )
 from apps.users.models import User
 from apps.users.serializers import UserSerializer
@@ -92,9 +93,14 @@ class TokenResponseSerializer(Serializer):
     refresh = CharField()
 
 
+class UserRegisterResponseSerializer(Serializer):
+    email = EmailField()
+    user_id = IntegerField()
+
+
 class RegisterResponseSerializer(Serializer):
     message = CharField()
-    data = UserSerializer()
+    data = UserRegisterResponseSerializer()
 
 
 class AuthResponseSerializer(Serializer):

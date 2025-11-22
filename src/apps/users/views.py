@@ -4,10 +4,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import User
 from .serializers import UserSerializer, UserPatchSerializer, UserRetrieveSerializer
+from .schemas import user_admin_actions_schema, user_actions_schema
 from utils.permissions import IsAdmin
 
 
 # Pra Admins
+@user_admin_actions_schema
 class UserAdminViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -23,6 +25,7 @@ class UserAdminViewSet(ModelViewSet):
     
 
 # Pra users autenticados
+@user_actions_schema
 class UserViewSet(GenericAPIView):
     permission_classes = [IsAuthenticated]
 
