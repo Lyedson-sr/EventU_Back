@@ -10,7 +10,7 @@ from .serializers import (
     GroupMemberListSerializer,
 )
 from .permissions import IsGroupCreatorOrReadOnly, IsGroupOwnerToAddMembers
-from .schemas import group_schemas
+from .schemas import group_schemas, group_members_schemas
 
 
 @group_schemas
@@ -42,6 +42,7 @@ class GroupViewSet(ModelViewSet):
         serializer.save(creator=self.request.user)
 
 
+@group_members_schemas
 class GroupMemberViewSet(ModelViewSet):
     queryset = GroupMember.objects.all().order_by("-id")
     permission_classes = [IsAuthenticated, IsGroupOwnerToAddMembers]
