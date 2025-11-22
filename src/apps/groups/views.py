@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from .models import Group, GroupMember
@@ -55,12 +56,20 @@ class GroupMemberViewSet(ModelViewSet):
 
     def get_queryset(self):
         # Filtra apenas membros do grupo especifico
-        group_pk = self.kwargs.get("group_pk")
-        return GroupMember.objects.filter(group_id=group_pk).select_related("user")
+        group = get_object_or_404(Group, id=self.kwargs["group_pk"])
+        return GroupMember.objects.filter(group=group).select_related("user")
+    
+    def get_object(self):
+        group = get_object_or_404(Group, id=self.kwargs["group_pk"])
+
+        return get_object_or_404(
+            GroupMember,
+            id=self.kwargs["pk"],
+            group=group
+        )
 
     def perform_create(self, serializer):
         # Define o grupo automaticamente pela URL
-        group_pk = self.kwargs.get("group_pk")
-        group = Group.objects.get(id=group_pk)
+        group = get_object_or_404(Group, id=self.kwargs["group_pk"])
         serializer.save(group=group)
     
