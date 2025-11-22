@@ -4,8 +4,10 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Group, GroupMember
 from .serializers import GroupRetrieveSerializer, GroupPatchSerializer, GroupCreateSerializer
 from .permissions import IsGroupCreatorOrReadOnly
+from .schemas import group_schemas
 
 
+@group_schemas
 class GroupViewSet(ModelViewSet):
     queryset = Group.objects.all().order_by("-id")
     permission_classes = [IsAuthenticated, IsGroupCreatorOrReadOnly]
