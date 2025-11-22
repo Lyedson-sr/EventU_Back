@@ -2,7 +2,6 @@ from pathlib import Path
 from dotenv import load_dotenv
 from datetime import timedelta
 import os
-import sys
 
 load_dotenv()
 
@@ -50,6 +49,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "apps.users",
     "apps.authentication",
+    "apps.events",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

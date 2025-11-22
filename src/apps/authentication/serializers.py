@@ -87,9 +87,6 @@ class PasswordResetConfirmSerializer(Serializer):
     new_password = CharField(write_only=True, min_length=8)
 
 
-class MessageResponseSerializer(Serializer):
-    message = CharField()
-
 class TokenResponseSerializer(Serializer):
     access = CharField()
     refresh = CharField()
@@ -104,5 +101,3 @@ class AuthResponseSerializer(Serializer):
     message = CharField()
     data = UserSerializer()
     tokens = TokenResponseSerializer()
-
-
