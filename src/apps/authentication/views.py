@@ -130,7 +130,6 @@ class ResetPasswordView(CreateAPIView):
         try:
             PasswordResetService.reset_password(
                 email=serializer.validated_data["email"],
-                code=serializer.validated_data["code"],
                 new_password=serializer.validated_data["new_password"],
             )
         except ValueError as e:

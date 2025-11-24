@@ -39,17 +39,17 @@ class PasswordResetService:
 
     
     @staticmethod
-    def reset_password(email: str, code: str, new_password: str) -> User:
+    def reset_password(email: str, new_password: str) -> User:
+        """Redefine a senha (código já foi validado anteriormente)"""
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            raise ValueError("Email ou código inválido")
+            raise ValueError("Email inválido")
         
-        cached_code = cache.get(f"password_reset_{user.id}")
-        if cached_code != code:
-            raise ValueError("Email ou código inválido")
+        if not cache.get(f"password_reset_{user.id}"):
+            raise ValueError("Código não validado ou expirado")
         
         user.set_password(new_password)
         user.save()
-        cache.delete(f"password_reset_{user.id}") # tira do cache
+        cache.delete(f"password_reset_{user.id}") 
         return user
