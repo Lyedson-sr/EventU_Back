@@ -12,6 +12,7 @@ from .serializers import (
     PasswordResetRequestSerializer,
     PasswordResetConfirmSerializer,
     UserSerializer,
+    InformCodeSerializer
 )
 from .services.activation_services import ActivationService
 from .services.password_reset_services import PasswordResetService
@@ -96,6 +97,20 @@ class ForgotPasswordView(CreateAPIView):
 
         return Response(
             {"message": _("Se o email existir, enviaremos um código de redefinição.")},
+            status=200,
+        )
+
+
+class InformCodeView(CreateAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = InformCodeSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        return Response(
+            {"message": _("Código validado com sucesso. Você pode redefinir sua senha.")},
             status=200,
         )
 

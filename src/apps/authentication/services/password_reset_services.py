@@ -25,6 +25,18 @@ class PasswordResetService:
             recipient_list=[user.email],
         )
 
+
+    @staticmethod
+    def verify_code(email: str, code: str) -> bool:
+        """Verifica se o código é válido para o email"""
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return False
+        
+        cached_code = cache.get(f"password_reset_{user.id}")
+        return cached_code == code
+
     
     @staticmethod
     def reset_password(email: str, code: str, new_password: str) -> User:
