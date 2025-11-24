@@ -12,6 +12,7 @@ from .serializers import (
 )
 from .permissions import IsGroupCreatorOrReadOnly, IsGroupOwnerToAddMembers
 from .schemas import group_schemas, group_members_schemas
+from utils.pagination import StandardResultsSetPagination
 
 
 @group_schemas
@@ -48,6 +49,7 @@ class GroupMemberViewSet(ModelViewSet):
     queryset = GroupMember.objects.all().order_by("-id")
     permission_classes = [IsAuthenticated, IsGroupOwnerToAddMembers]
     http_method_names = ["get", "post", "delete"]
+    pagination_class = StandardResultsSetPagination
 
     def get_serializer_class(self):
         if self.action == "create":

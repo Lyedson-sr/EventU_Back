@@ -12,7 +12,7 @@ from apps.users.models import User
 
 class Group(Model):
     creator = ForeignKey(User, on_delete=PROTECT, related_name="created_groups")
-    name = CharField(max_length=60, null=False, blank=False)
+    name = CharField(max_length=120, null=False, blank=False)
     description = TextField()
     color = CharField(null=False, blank=False)
     created_at = DateTimeField(auto_now_add=True)

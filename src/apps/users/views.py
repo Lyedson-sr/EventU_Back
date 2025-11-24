@@ -6,15 +6,17 @@ from .models import User
 from .serializers import UserSerializer, UserPatchSerializer, UserRetrieveSerializer
 from .schemas import user_admin_actions_schema, user_actions_schema
 from utils.permissions import IsAdmin
+from utils.pagination import StandardResultsSetPagination
 
 
 # Pra Admins
 @user_admin_actions_schema
 class UserAdminViewSet(ModelViewSet):
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by("-id")
     serializer_class = UserSerializer
     permission_classes = [IsAdmin]
     http_method_names = ["get", "patch"]
+    pagination_class = StandardResultsSetPagination
 
     def get_serializer_class(self):
         if self.action == "partial_update":
