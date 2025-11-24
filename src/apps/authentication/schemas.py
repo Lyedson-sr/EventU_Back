@@ -42,6 +42,17 @@ forgot_password_schema = extend_schema_view(
 )
 
 
+inform_code_schema = extend_schema_view(
+    post=extend_schema(
+        summary="Recebe e verifica o código de reset de senha enviado por email",
+        description="Recebe o código enviado para o email do usuário e valida",
+        responses={
+            200: MessageResponseSerializer,
+        },
+    )
+)
+
+
 # reset_password_schema = extend_schema_view(
 #     post=extend_schema(
 #         summary="Recebe "

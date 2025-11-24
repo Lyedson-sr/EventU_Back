@@ -23,6 +23,7 @@ from .schemas import (
     # reset_password_schema,
     login_schema,
     logout_schema,
+    inform_code_schema,
 )
 from apps.users.models import User
 
@@ -101,6 +102,7 @@ class ForgotPasswordView(CreateAPIView):
         )
 
 
+@inform_code_schema
 class InformCodeView(CreateAPIView):
     permission_classes = [AllowAny]
     serializer_class = InformCodeSerializer

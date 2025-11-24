@@ -85,7 +85,7 @@ class PasswordResetRequestSerializer(Serializer):
 
 
 class InformCodeSerializer(Serializer):
-    email = EmailField()  # ← Adicionei email aqui também
+    email = EmailField()
     code = CharField(max_length=4, min_length=4)
 
     def validate(self, attrs):
@@ -112,7 +112,6 @@ class PasswordResetConfirmSerializer(Serializer):
         except User.DoesNotExist:
             raise ValidationError("Email inválido.")
 
-        # Verifica se há um código válido no cache (usuário já validou o código)
         if not cache.get(f"password_reset_{user.id}"):
             raise ValidationError("Código não validado ou expirado.")
 
