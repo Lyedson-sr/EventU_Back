@@ -20,7 +20,7 @@ from .schemas import (
     register_schema,
     activate_account_schema,
     forgot_password_schema,
-    # reset_password_schema,
+    reset_password_schema,
     login_schema,
     logout_schema,
     inform_code_schema,
@@ -117,7 +117,7 @@ class InformCodeView(CreateAPIView):
         )
 
 
-# @reset_password_schema
+@reset_password_schema
 class ResetPasswordView(CreateAPIView):
     permission_classes = [AllowAny]
     serializer_class = PasswordResetConfirmSerializer

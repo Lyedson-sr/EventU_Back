@@ -53,11 +53,15 @@ inform_code_schema = extend_schema_view(
 )
 
 
-# reset_password_schema = extend_schema_view(
-#     post=extend_schema(
-#         summary="Recebe "
-#     )
-# )
+reset_password_schema = extend_schema_view(
+    post=extend_schema(
+        summary="Atualiza a senha do usuário",
+        description="Recebe o email e a nova senha do usuário para atualização",
+        responses={
+            200: MessageResponseSerializer
+        }
+    )
+)
 
 
 login_schema = extend_schema_view(

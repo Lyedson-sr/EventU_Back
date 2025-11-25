@@ -59,10 +59,12 @@ class UserActivationSerializer(Serializer):
 class UserLoginSerializer(Serializer):
     email = EmailField()
     password = CharField(write_only=True)
+    role = CharField(required=True, write_only=True)
 
     def validate(self, attrs):
         email = attrs.get("email")
         password = attrs.get("password")
+        requested_role = attrs.get("role") 
 
         user = authenticate(username=email, password=password)
 
@@ -71,6 +73,11 @@ class UserLoginSerializer(Serializer):
 
         if not user.is_active:
             raise ValidationError("Conta inativa ou não verificada.")
+        
+        if requested_role and user.role != requested_role:
+            raise ValidationError(
+                "Erro ao fazer login."
+            )
         
         attrs["user"] = user
         return attrs
