@@ -13,6 +13,10 @@ class IsGroupCreatorOrReadOnly(BasePermission):
         if request.method in SAFE_METHODS:
             return True
         
+        # Acesso total pra superusers e staff
+        if request.user.is_staff:
+            return True
+
         # Apenas o criador pode editar ou deletar
         return obj.creator == request.user
 

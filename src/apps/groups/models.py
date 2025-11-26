@@ -21,6 +21,9 @@ class Group(Model):
     class Meta:
         db_table = "groups"
 
+    def __str__(self):
+        return f"Group(id={self.id}, name={self.name}, creator={self.creator.email})"
+
 
 class GroupMember(Model):
     group = ForeignKey(Group, on_delete=CASCADE, related_name="group_members")
@@ -29,3 +32,6 @@ class GroupMember(Model):
 
     class Meta:
         db_table = "group_members"
+
+    def __str__(self):
+        return f"GroupMember(id={self.id}, group_id={self.group.id}, group_name={self.group.name}, user_email={self.user.email})"
