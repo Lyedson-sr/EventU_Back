@@ -79,7 +79,7 @@ class PasswordResetServiceTest(TestCase):
 
     def test_reset_password_success(self):
         code = PasswordResetService.generate_reset_code(self.user.id)
-        PasswordResetService.verify_code(self.user.email, code)  # Simula validação prévia
+        PasswordResetService.verify_code(self.user.email, code)
         
         updated_user = PasswordResetService.reset_password(
             self.user.email, 'newpassword123'
