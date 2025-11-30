@@ -30,6 +30,9 @@ POSTGRES_PASSWORD=sua_senha
 ```bash
 docker compose -f docker-compose.dev.yaml up --build
 ```
+#### 5. Acesse a aplicação
+- **API: http://localhost:8000
+- **Swagger UI: http://localhost:8000/docs
 
 ### Localmente:
 
