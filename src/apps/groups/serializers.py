@@ -1,5 +1,8 @@
 from rest_framework.serializers import ModelSerializer, EmailField, ValidationError
+from rest_framework.status import HTTP_404_NOT_FOUND
 from .models import Group, GroupMember
+from apps.users.models import User
+from utils.errors import GenericError
 
 
 class GroupCreateSerializer(ModelSerializer):
@@ -13,7 +16,7 @@ class GroupCreateSerializer(ModelSerializer):
             "created_at"
         ]
         read_only_fields = ["id", "created_at"]
-
+        
 
 class GroupRetrieveSerializer(ModelSerializer):
     class Meta:
@@ -55,8 +58,6 @@ class GroupMemberCreateSerializer(ModelSerializer):
         read_only_fields = ["id", "joined_at", "user"]
 
     def validate(self, attrs):
-        from apps.users.models import User
-        
         email = attrs.pop('email', None)
         group_pk = self.context['view'].kwargs.get('group_pk')
         
@@ -65,11 +66,18 @@ class GroupMemberCreateSerializer(ModelSerializer):
                 user = User.objects.get(email=email)
                 attrs['user'] = user
             except User.DoesNotExist:
-                raise ValidationError("Usuário não encontrado.")
+                raise GenericError(
+                    status_code=HTTP_404_NOT_FOUND,
+                    detail="Usuário não encontrado.",
+                    code="not_found"
+                )
         
         # Verifica se usuário já é membro do grupo
         if GroupMember.objects.filter(group_id=group_pk, user=attrs['user']).exists():
-            raise ValidationError("Este usuário já é membro do grupo.")
+            raise ValidationError(
+                detail="Este usuário já é membro do grupo.",
+                code="unique"
+            )
         
         return attrs
 

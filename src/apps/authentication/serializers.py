@@ -10,12 +10,14 @@ from apps.users.models import User
 from apps.users.serializers import UserSerializer
 from .services.activation_services import ActivationService
 from .services.password_reset_services import PasswordResetService
+from utils.validators import validate_unique_email
 from django.contrib.auth import authenticate
 from django.core.cache import cache
 
 
 class UserRegistrationSerializer(ModelSerializer):
     password = CharField(write_only=True, min_length=8)
+    email = EmailField(validators=[validate_unique_email])
 
     class Meta:
         model = User
@@ -38,13 +40,22 @@ class UserActivationSerializer(Serializer):
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            raise ValidationError("Usuário não encontrado.")
+            raise ValidationError(
+                detail="Usuário não encontrado.",
+                code="invalid"
+            )
 
         if user.is_active:
-            raise ValidationError("Esta conta já está ativa.")
+            raise ValidationError(
+                detail="Esta conta já está ativa.",
+                code="invalid"
+            )
 
         if not ActivationService.verify_activation_code(user.id, code):
-            raise ValidationError("Código de ativação inválido ou expirado.")
+            raise ValidationError(
+                detail="Código de ativação inválido ou expirado.",
+                code="invalid"
+            )
 
         attrs["user"] = user
         return attrs
@@ -69,14 +80,21 @@ class UserLoginSerializer(Serializer):
         user = authenticate(username=email, password=password)
 
         if not user:
-            raise ValidationError("Credenciais inválidas")
+            raise ValidationError(
+                detail="Credenciais inválidas.",
+                code="invalid"
+            )
 
         if not user.is_active:
-            raise ValidationError("Conta inativa ou não verificada.")
+            raise ValidationError(
+                detail="Conta inativa ou não verificada.",
+                code="invalid"
+            )
         
         if requested_role and user.role != requested_role:
             raise ValidationError(
-                "Erro ao fazer login."
+                detail="Erro ao fazer login.",
+                code="invalid"
             )
         
         attrs["user"] = user
@@ -101,7 +119,10 @@ class InformCodeSerializer(Serializer):
 
         # Verifica se o código é válido
         if not PasswordResetService.verify_code(email, code):
-            raise ValidationError("Código inválido ou expirado.")
+            raise ValidationError(
+                detail="Código inválido ou expirado.",
+                code="invalid"
+            )
 
         return attrs
 
@@ -117,10 +138,16 @@ class PasswordResetConfirmSerializer(Serializer):
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            raise ValidationError("Email inválido.")
+            raise ValidationError(
+                detail="Email inválido.",
+                code="invalid"
+            )
 
         if not cache.get(f"password_reset_{user.id}"):
-            raise ValidationError("Código não validado ou expirado.")
+            raise ValidationError(
+                detail="Código não validado ou expirado.",
+                code="invalid"
+            )
 
         return attrs
 
