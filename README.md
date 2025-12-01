@@ -16,14 +16,20 @@ cp .env.example .env.docker
 Em seguida, edite o arquivo .env.docker:
 ```env
 SECRET_KEY=sua_secret_key_super_segura_aqui
-ALLOWED_HOSTS=hosts_permitidos
+ALLOWED_HOSTS=*
 DEBUG=sua_opcao_de_debug
 
 POSTGRES_DB=seu_banco
-POSTGRES_HOST=postgres
-POSTGRES_PORT=5432
 POSTGRES_USER=seu_user
 POSTGRES_PASSWORD=sua_senha
+POSTGRES_PORT=5432
+POSTGRES_HOST=postgres
+
+REDIS_URL=redis://redis:6379
+
+EMAIL_HOST_USER=seu_email_host_user
+EMAIL_HOST_PASSWORD=seu_email_host_password
+DEFAULT_FROM_EMAIL=seu_default_from_email
 ```
 
 #### 4. Rode o docker compose
@@ -77,14 +83,20 @@ cp .env.example .env
 Em seguida, edite o arquivo .env:
 ```env
 SECRET_KEY=sua_secret_key_super_segura_aqui
-ALLOWED_HOSTS=hosts_permitidos
+ALLOWED_HOSTS=*
 DEBUG=sua_opcao_de_debug
 
 POSTGRES_DB=seu_banco
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
 POSTGRES_USER=seu_user
 POSTGRES_PASSWORD=sua_senha
+POSTGRES_PORT=5432
+POSTGRES_HOST=localhost
+
+REDIS_URL=redis://127.0.0.1:6379
+
+EMAIL_HOST_USER=seu_email_host_user
+EMAIL_HOST_PASSWORD=seu_email_host_password
+DEFAULT_FROM_EMAIL=seu_default_from_email
 ```
 
 #### 5. Suba apenas o banco e o redis com docker compose
