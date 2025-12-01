@@ -28,7 +28,7 @@ POSTGRES_PASSWORD=sua_senha
 
 #### 4. Rode o docker compose
 ```bash
-docker compose -f docker-compose.dev.yaml up --build
+docker compose up --build
 ```
 
 ### Localmente:
@@ -87,9 +87,9 @@ POSTGRES_USER=seu_user
 POSTGRES_PASSWORD=sua_senha
 ```
 
-#### 5. Suba apenas o banco com docker compose
+#### 5. Suba apenas o banco e o redis com docker compose
 ```bash
-docker compose -f docker-compose.dev.yaml postgres up
+docker compose postgres redis up
 ```
 
 #### 6. Faça as migrações
