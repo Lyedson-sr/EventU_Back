@@ -1,5 +1,5 @@
-from rest_framework.serializers import ModelSerializer, ValidationError
-from .models import Event
+from rest_framework.serializers import ModelSerializer, ValidationError, CharField
+from .models import Event, EventOccurrences
 from .enums import EventType
 
 
@@ -125,4 +125,30 @@ class EventListSerializer(ModelSerializer):
             "end_datetime",
             "color",
             "created_at",
+        ]
+
+
+class EventOccurrencesSerializer(ModelSerializer):
+    event_title = CharField(source='event.title', read_only=True)
+    event_description = CharField(source='event.description', read_only=True)
+    event_location = CharField(source='event.location', read_only=True)
+    event_type = CharField(source='event.event_type', read_only=True)
+    event_color = CharField(source='event.color', read_only=True)
+    creator_name = CharField(source='event.creator.name', read_only=True)
+    
+    class Meta:
+        model = EventOccurrences
+        fields = [
+            'id',
+            'event_title',
+            'event_description', 
+            'event_location',
+            'event_type',
+            'event_color',
+            'creator_name',
+            'occurrence_start',
+            'occurrence_end',
+            'cancelled',
+            'created_at',
+            'updated_at'
         ]
