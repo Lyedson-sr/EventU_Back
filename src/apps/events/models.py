@@ -8,11 +8,14 @@ from django.db.models import (
     BooleanField,
     CASCADE,
 )
+from django.db.models.signals import post_save, pre_save
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
+from django.dispatch import receiver
 from apps.users.models import User
 from apps.groups.models import Group
 from .enums import EventType
+from .services.recurrence_services import RecurrenceService
 
 
 class Event(Model):
@@ -39,7 +42,55 @@ class Event(Model):
                 "detail": "A data de término deve ser após a data de início."
             })
         
-        if self.group.creator != self.creator:
+        if self.group and self.group.creator != self.creator:
             raise ValidationError({
                 "detail": "Apenas o criador do grupo pode criar eventos."
             })
+        
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+
+        # se é um novo evento ou a RRULE foi modificada, gera ocorrências
+        if is_new or self._state.adding:
+            RecurrenceService.generate_occurrences(self)
+
+    def __str__(self):
+        return f"Event(id={self.id}, title={self.title}, creator={self.creator.email})"
+
+
+@receiver(post_save, sender=Event)
+def update_event_occurrences(sender, instance, **kwargs):
+    if instance.pk and hasattr(instance, "_previous_recurrence_rrule"):
+        if (instance.recurrence_rrule != instance._previous_recurrence_rrule or
+            instance.start_datetime != getattr(instance, '_previous_start_datetime', None) or
+            instance.end_datetime != getattr(instance, '_previous_end_datetime', None)):
+            
+            RecurrenceService.update_occurrences(instance)
+        
+
+@receiver(pre_save, sender=Event)
+def store_previous_values(sender, instance, **kwargs):
+    if instance.pk:
+        try:
+            previous = Event.objects.get(pk=instance.pk)
+            instance._previous_recurrence_rrule = previous.recurrence_rrule
+            instance._previous_start_datetime = previous.start_datetime
+            instance._previous_end_datetime = previous.end_datetime
+        except Event.DoesNotExist:
+            pass
+
+
+class EventOccurrences(Model):
+    event = ForeignKey(Event, on_delete=CASCADE, related_name="occurrences")
+    occurrence_start = DateTimeField(null=False, blank=False)
+    occurrence_end = DateTimeField(null=False, blank=False)
+    cancelled = BooleanField(null=False, blank=False, default=False)
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "event_occurrences"
+
+    def __str__(self):
+        return f"EventOccurrences(id={self.id}, event_id={self.event.id}, title={self.event.title}, occurrence_start={self.occurrence_start})"
