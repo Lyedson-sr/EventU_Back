@@ -3,6 +3,7 @@ from django.utils import timezone
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from .services.guest_invitation_service import GuestInvitationService
 from .models import Event, EventOccurrences
 from .permissions import CanCreateEventType, CanViewEvent, IsEventCreatorOrAdmin
 from .enums import EventType
@@ -13,6 +14,7 @@ from .serializers import (
     EventListSerializer,
     EventOccurrencesSerializer,
 )
+from .schemas import event_occurrences_schema
 from datetime import datetime
 
 
@@ -48,11 +50,14 @@ class EventsViewSet(ModelViewSet):
             .distinct()
             .order_by("-start_datetime")
         )
+    
 
     def perform_create(self, serializer):
-        serializer.save(creator=self.request.user)
+        event = serializer.save(creator=self.request.user)
+        GuestInvitationService.send_invitations_async(event)
 
 
+@event_occurrences_schema
 class EventOccurrencesViewSet(ModelViewSet):
     queryset = EventOccurrences.objects.all().order_by("-id")
     permission_classes = [IsAuthenticated, CanViewEvent]

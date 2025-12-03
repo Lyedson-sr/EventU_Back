@@ -1,9 +1,12 @@
 from rest_framework.serializers import ModelSerializer, ValidationError, CharField
-from .models import Event, EventOccurrences
+from .models import Event, EventOccurrences, EventGuest
 from .enums import EventType
+from .services.guest_invitation_service import GuestInvitationService
 
 
 class EventCreateSerializer(ModelSerializer):
+    guest_emails = CharField(write_only=True, required=False)
+
     class Meta:
         model = Event
         fields = [
@@ -18,6 +21,7 @@ class EventCreateSerializer(ModelSerializer):
             "recurrence_rrule",
             "recurrence_exceptions",
             "color",
+            "guest_emails",
             "created_at",
         ]
         read_only_fields = ["id", "created_at"]
@@ -54,9 +58,34 @@ class EventCreateSerializer(ModelSerializer):
                 raise ValidationError({"detail": "Você não é membro deste grupo."})
 
         return attrs
+    
+    def create(self, validated_data):
+        guest_emails = validated_data.pop("guest_emails", "")
+
+        event = Event.objects.create(**validated_data)
+
+        if guest_emails:
+            emails = [email.strip() for email in guest_emails.split(",") if email.strip()]
+
+            for email in emails:
+                EventGuest.objects.create(event=event, email=email)
+
+        return event
+
+
+class EventGuestSerializer(ModelSerializer):
+    class Meta:
+        model = EventGuest
+        fields = [
+            "id",
+            "email",
+            "invitation_sent",
+        ]
 
 
 class EventRetrieveSerializer(ModelSerializer):
+    guests = EventGuestSerializer(many=True, read_only=True)
+
     class Meta:
         model = Event
         fields = [
@@ -73,10 +102,13 @@ class EventRetrieveSerializer(ModelSerializer):
             "recurrence_exceptions",
             "color",
             "created_at",
+            "guests",
         ]
 
 
 class EventPatchSerializer(ModelSerializer):
+    guest_emails = CharField(required=False, write_only=True)
+
     class Meta:
         model = Event
         fields = [
@@ -90,6 +122,7 @@ class EventPatchSerializer(ModelSerializer):
             "recurrence_rrule",
             "recurrence_exceptions",
             "color",
+            "guest_emails",
             "created_at",
         ]
         read_only_fields = ["id", "created_at"]
@@ -110,6 +143,44 @@ class EventPatchSerializer(ModelSerializer):
                 )
 
         return attrs
+    
+    def update(self, instance, validated_data):
+        guest_emails = validated_data.pop("guest_emails", None)
+
+        instance = super().update(instance, validated_data)
+
+        if guest_emails is not None:
+            added = self.sync_guests(instance, guest_emails)
+
+            if added:
+                GuestInvitationService.send_invitations_async(instance)
+
+        return instance
+
+    def sync_guests(self, event, guest_emails_raw):
+        emails = {
+            email.strip()
+            for email in guest_emails_raw.split(",")
+            if email.strip()
+        }
+
+        # Convidados atuais no banco
+        existing = set(event.guests.values_list("email", flat=True))
+
+        # Emails para adicionar
+        to_add = emails - existing
+
+        # Emails para remover
+        to_remove = existing - emails
+
+        # Remover convidados
+        event.guests.filter(email__in=to_remove).delete()
+
+        # Adicionar convidados novos
+        for email in to_add:
+            EventGuest.objects.create(event=event, email=email)
+
+        return to_add
 
 
 class EventListSerializer(ModelSerializer):
