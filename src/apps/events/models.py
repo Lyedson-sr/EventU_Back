@@ -6,6 +6,7 @@ from django.db.models import (
     DateTimeField,
     JSONField,
     BooleanField,
+    EmailField,
     CASCADE,
 )
 from django.db.models.signals import post_save, pre_save
@@ -94,3 +95,30 @@ class EventOccurrences(Model):
 
     def __str__(self):
         return f"EventOccurrences(id={self.id}, event_id={self.event.id}, title={self.event.title}, occurrence_start={self.occurrence_start})"
+    
+
+class EventGuest(Model):
+    event = ForeignKey(Event, on_delete=CASCADE, related_name="guests")
+    user = ForeignKey(User, on_delete=CASCADE, related_name="event_guests", blank=True, null=True)
+    email = EmailField(_("email do convidado"), max_length=255, blank=False, null=False)
+    invitation_sent = BooleanField(default=False)
+    invitation_sent_at = DateTimeField(null=True, blank=True)
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "event_guests"
+        unique_together = [["event", "email"]]
+
+    def clean(self):
+        if EventGuest.objects.filter(
+            event=self.event,
+            email=self.email
+        ).exclude(id=self.id).exists():
+            raise ValidationError({
+                "detail": "Este e-mail já foi adicionado como convidado para este evento."
+            })
+        
+
+    def __str__(self):
+        return f"{self.name} <{self.email}> - {self.event.title}"
