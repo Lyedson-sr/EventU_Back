@@ -14,10 +14,11 @@ from .serializers import (
     EventListSerializer,
     EventOccurrencesSerializer,
 )
-from .schemas import event_occurrences_schema
+from .schemas import event_occurrences_schema, event_schema
 from datetime import datetime
 
 
+@event_schema
 class EventsViewSet(ModelViewSet):
     queryset = Event.objects.all().order_by("-id")
     permission_classes = [
