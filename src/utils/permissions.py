@@ -10,6 +10,3 @@ class IsAdmin(DjangoModelPermissions):
         if request.user.role == Role.ADMIN and request.user.is_staff:
             return True
         
-
-class IsAdminOrHasPermission(DjangoModelPermissions):
-    ...
