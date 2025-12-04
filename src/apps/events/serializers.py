@@ -1,11 +1,15 @@
-from rest_framework.serializers import ModelSerializer, ValidationError, CharField
+from rest_framework.serializers import ModelSerializer, ValidationError, CharField, ListField, EmailField
 from .models import Event, EventOccurrences, EventGuest
 from .enums import EventType
 from .services.guest_invitation_service import GuestInvitationService
 
 
 class EventCreateSerializer(ModelSerializer):
-    guest_emails = CharField(write_only=True, required=False)
+    guest_emails = ListField(
+        child=EmailField(),
+        write_only=True,
+        required=False,
+    )
 
     class Meta:
         model = Event
@@ -60,15 +64,11 @@ class EventCreateSerializer(ModelSerializer):
         return attrs
     
     def create(self, validated_data):
-        guest_emails = validated_data.pop("guest_emails", "")
-
+        guest_emails = validated_data.pop("guest_emails", [])
         event = Event.objects.create(**validated_data)
 
-        if guest_emails:
-            emails = [email.strip() for email in guest_emails.split(",") if email.strip()]
-
-            for email in emails:
-                EventGuest.objects.create(event=event, email=email)
+        for email in guest_emails:
+            EventGuest.objects.create(event=event, email=email)
 
         return event
 
@@ -107,7 +107,11 @@ class EventRetrieveSerializer(ModelSerializer):
 
 
 class EventPatchSerializer(ModelSerializer):
-    guest_emails = CharField(required=False, write_only=True)
+    guest_emails = ListField(
+        child=EmailField(),
+        required=False,
+        write_only=True,
+    )
 
     class Meta:
         model = Event
@@ -157,12 +161,8 @@ class EventPatchSerializer(ModelSerializer):
 
         return instance
 
-    def sync_guests(self, event, guest_emails_raw):
-        emails = {
-            email.strip()
-            for email in guest_emails_raw.split(",")
-            if email.strip()
-        }
+    def sync_guests(self, event, guest_emails_list):
+        emails = set(guest_emails_list)
 
         # Convidados atuais no banco
         existing = set(event.guests.values_list("email", flat=True))
