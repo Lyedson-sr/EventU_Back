@@ -40,14 +40,7 @@ class GroupViewSet(ModelViewSet):
         ).distinct()
 
     def perform_create(self, serializer):
-        # Define o criador como o user logado
-        group = serializer.save(creator=self.request.user)
-
-        # Adiciona o criador como membro do grupo
-        GroupMember.objects.create(
-            group=group,
-            user=self.request.user
-        )
+        serializer.save()
 
 
 @group_members_schemas

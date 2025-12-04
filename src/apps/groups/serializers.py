@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer, EmailField, ValidationError
+from rest_framework.serializers import ModelSerializer, EmailField, ListField, ValidationError
 from rest_framework.status import HTTP_404_NOT_FOUND
 from .models import Group, GroupMember
 from apps.users.models import User
@@ -6,6 +6,12 @@ from utils.errors import GenericError
 
 
 class GroupCreateSerializer(ModelSerializer):
+    members_emails = ListField(
+        child=EmailField(),
+        write_only=True,
+        required=False
+    )
+
     class Meta:
         model = Group
         fields = [
@@ -13,9 +19,36 @@ class GroupCreateSerializer(ModelSerializer):
             "name",
             "description",
             "color",
-            "created_at"
+            "created_at",
+            "members_emails",
         ]
         read_only_fields = ["id", "created_at"]
+
+    def create(self, validated_data):
+        members_emails = validated_data.pop("members_emails", [])
+
+        request = self.context.get("request")
+
+        # Cria grupo
+        group = Group.objects.create(creator=request.user, **validated_data)
+        
+        # Criador vira membro
+        GroupMember.objects.create(group=group, user=request.user)
+
+        for email in members_emails:
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                raise GenericError(
+                    status_code=HTTP_404_NOT_FOUND,
+                    detail=f"Usuário {email} não encontrado.",
+                    code="not_found"
+                )
+            
+            if not GroupMember.objects.filter(group=group, user=user).exists():
+                GroupMember.objects.create(group=group, user=user)
+
+        return group
         
 
 class GroupRetrieveSerializer(ModelSerializer):
