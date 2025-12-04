@@ -37,7 +37,7 @@ class GroupViewSet(ModelViewSet):
         # Filtra grupos que o user é criador ou membro
         return Group.objects.filter(
             Q(creator=user) | Q(group_members__user=user)
-        ).distinct()
+        ).distinct().order_by("-id")
 
     def perform_create(self, serializer):
         serializer.save()

@@ -49,9 +49,27 @@ class GroupCreateSerializer(ModelSerializer):
                 GroupMember.objects.create(group=group, user=user)
 
         return group
-        
+
+
+class GroupMemberNestedSerializer(ModelSerializer):
+    email = EmailField(source="user.email")
+
+    class Meta:
+        model = GroupMember
+        fields = [
+            "id",
+            "email",
+            "joined_at"
+        ]
+
 
 class GroupRetrieveSerializer(ModelSerializer):
+    members = GroupMemberNestedSerializer(
+        source="group_members",
+        many=True,
+        read_only=True
+    )
+
     class Meta:
         model = Group
         fields = [
@@ -60,11 +78,18 @@ class GroupRetrieveSerializer(ModelSerializer):
             "name",
             "description",
             "color",
+            "members",
             "created_at",
         ]
 
 
 class GroupPatchSerializer(ModelSerializer):
+    members_emails = ListField(
+        child=EmailField(),
+        required=False,
+        write_only=True
+    )
+
     class Meta:
         model = Group
         fields = [
@@ -72,9 +97,53 @@ class GroupPatchSerializer(ModelSerializer):
             "name",
             "description",
             "color",
+            "members_emails",
             "created_at",
         ]
         read_only_fields = ["id", "created_at"]
+
+    def update(self, instance, validated_data):
+        members_emails = validated_data.pop("members_emails", None)
+
+        instance = super().update(instance, validated_data)
+
+        if members_emails is not None:
+            self.sync_members(instance, members_emails)
+
+        return instance
+
+    def sync_members(self, group, members_emails):
+        # emails enviados no patch
+        emails = set(members_emails)
+
+        # membros atuais no banco
+        existing = set(
+            group.group_members.select_related("user")
+            .values_list("user__email", flat=True)
+        )
+
+        # remover
+        to_remove = existing - emails
+
+        if to_remove:
+            GroupMember.objects.filter(
+                group=group,
+                user__email__in=to_remove
+            ).delete()
+
+        # adicionar
+        to_add = emails - existing
+
+        for email in to_add:
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                raise ValidationError(
+                    detail=f"Usuário {email} não encontrado.",
+                    code="not_found"
+                )
+
+            GroupMember.objects.create(group=group, user=user)
 
 
 class GroupMemberCreateSerializer(ModelSerializer):
