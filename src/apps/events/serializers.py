@@ -192,6 +192,8 @@ class EventListSerializer(ModelSerializer):
             "group",
             "title",
             "event_type",
+            "description",
+            "location",
             "start_datetime",
             "end_datetime",
             "color",
