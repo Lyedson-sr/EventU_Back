@@ -183,24 +183,6 @@ class EventPatchSerializer(ModelSerializer):
         return to_add
 
 
-class EventListSerializer(ModelSerializer):
-    class Meta:
-        model = Event
-        fields = [
-            "id",
-            "creator",
-            "group",
-            "title",
-            "event_type",
-            "description",
-            "location",
-            "start_datetime",
-            "end_datetime",
-            "color",
-            "created_at",
-        ]
-
-
 class EventOccurrencesSerializer(ModelSerializer):
     event_title = CharField(source='event.title', read_only=True)
     event_description = CharField(source='event.description', read_only=True)

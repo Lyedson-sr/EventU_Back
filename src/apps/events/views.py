@@ -11,7 +11,6 @@ from .serializers import (
     EventRetrieveSerializer,
     EventPatchSerializer,
     EventCreateSerializer,
-    EventListSerializer,
     EventOccurrencesSerializer,
 )
 from .schemas import event_occurrences_schema, event_schema
@@ -37,7 +36,7 @@ class EventsViewSet(ModelViewSet):
         elif self.action == "create":
             return EventCreateSerializer
         else:
-            return EventListSerializer
+            return EventRetrieveSerializer
 
     def get_queryset(self):
         user = self.request.user
