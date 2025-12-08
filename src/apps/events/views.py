@@ -14,6 +14,7 @@ from .serializers import (
     EventOccurrencesSerializer,
 )
 from .schemas import event_occurrences_schema, event_schema
+from .services.recurrence_services import RecurrenceService
 from datetime import datetime
 
 
@@ -50,11 +51,30 @@ class EventsViewSet(ModelViewSet):
             .distinct()
             .order_by("-start_datetime")
         )
-    
 
     def perform_create(self, serializer):
+
         event = serializer.save(creator=self.request.user)
-        GuestInvitationService.send_invitations_async(event)
+
+        RecurrenceService.generate_occurrences(event.id)
+
+        GuestInvitationService.send_invitations_async(event.id)
+
+    def perform_update(self, serializer):
+        old_event = self.get_object()
+
+        old_rrule = old_event.recurrence_rrule
+        old_start = old_event.start_datetime
+        old_end = old_event.end_datetime
+
+        event = serializer.save()
+
+        if (
+            old_rrule != event.recurrence_rrule or
+            old_start != event.start_datetime or
+            old_end != event.end_datetime
+        ):
+            RecurrenceService.update_occurrences(event.id)
 
 
 @event_occurrences_schema
