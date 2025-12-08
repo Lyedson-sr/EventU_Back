@@ -9,7 +9,7 @@ from django.db.models import (
     EmailField,
     CASCADE,
 )
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, pre_delete
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.dispatch import receiver
@@ -80,6 +80,12 @@ def store_previous_values(sender, instance, **kwargs):
             instance._previous_end_datetime = previous.end_datetime
         except Event.DoesNotExist:
             pass
+
+
+@receiver(pre_delete, sender=Event)
+def delete_event_occurrences(sender, instance, **kwargs):
+    instance.occurrences.all().delete()
+    instance.guests.all().delete()
 
 
 class EventOccurrences(Model):
