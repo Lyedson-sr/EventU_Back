@@ -1,14 +1,20 @@
 from dateutil.rrule import rrulestr
 from django.utils import timezone
+from django.db import transaction
 
 
 class RecurrenceService:
-    @staticmethod
-    def generate_occurrences(event):
-        # OBS: tive que botar aqui por conta de circular import
-        from ..models import EventOccurrences
 
-        # Se não tem regra de recorrência, cria apenas uma ocorrência
+    @staticmethod
+    def generate_occurrences(event_id):
+        # OBS: tive q botar aqui por causa de circular import
+        from ..models import Event, EventOccurrences
+
+        try:
+            event = Event.objects.get(pk=event_id)
+        except Event.DoesNotExist:
+            return
+
         if not event.recurrence_rrule:
             EventOccurrences.objects.create(
                 event=event,
@@ -17,48 +23,54 @@ class RecurrenceService:
             )
             return
 
-        # Parse da RRULE
         try:
-            rrule = rrulestr(
-                event.recurrence_rrule,
-                dtstart=event.start_datetime
-            )
-        except Exception as e:
-            raise ValueError(f"RRULE inválida: {str(e)}")
+            rrule = rrulestr(event.recurrence_rrule, dtstart=event.start_datetime)
+        except Exception:
+            return
 
-        # Gera as ocorrências
         exceptions = event.recurrence_exceptions or {}
-        exception_dates = exceptions.get('dates', [])
+        exception_dates = exceptions.get("dates", [])
+
+        duration = event.end_datetime - event.start_datetime
+
+        MAX_OCCURRENCES = 500
+        occurrences_to_create = []
+        count = 0
 
         for occurrence_date in rrule:
-            # Converte para datetime aware se necessário
+            if count >= MAX_OCCURRENCES:
+                break
+
             if timezone.is_naive(occurrence_date):
                 occurrence_date = timezone.make_aware(occurrence_date)
 
-            # Calcula a duração do evento
-            duration = event.end_datetime - event.start_datetime
-
-            # Define start e end da ocorrência
-            occurrence_start = occurrence_date
-            occurrence_end = occurrence_start + duration
-
-            # Verifica se essa data tá nas exceções
-            occurrence_date_str = occurrence_date.date().isoformat()
-            if occurrence_date_str in exception_dates:
+            if occurrence_date.date().isoformat() in exception_dates:
                 continue
 
-            # Cria a ocorrência
-            EventOccurrences.objects.create(
-                event=event,
-                occurrence_start=occurrence_start,
-                occurrence_end=occurrence_end
+            occurrences_to_create.append(
+                EventOccurrences(
+                    event=event,
+                    occurrence_start=occurrence_date,
+                    occurrence_end=occurrence_date + duration
+                )
+            )
+
+            count += 1
+
+        with transaction.atomic():
+            EventOccurrences.objects.bulk_create(
+                occurrences_to_create,
+                batch_size=100 
             )
 
     @staticmethod
-    def update_occurrences(event):
-        # OBS: também tive que colocar aqui por causa de circular import
-        from ..models import EventOccurrences
+    def update_occurrences(event_id):
+        from ..models import Event, EventOccurrences
 
-        # Deleta ocorrências existentes e gera novas
+        try:
+            event = Event.objects.get(pk=event_id)
+        except Event.DoesNotExist:
+            return
+
         EventOccurrences.objects.filter(event=event).delete()
-        RecurrenceService.generate_occurrences(event)
+        RecurrenceService.generate_occurrences(event.id)
