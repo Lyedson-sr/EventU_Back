@@ -1,4 +1,11 @@
-from rest_framework.serializers import ModelSerializer, ValidationError, CharField, ListField, EmailField
+from rest_framework.serializers import (
+    ModelSerializer,
+    ValidationError,
+    CharField,
+    ListField,
+    EmailField,
+    IntegerField,
+)
 from .models import Event, EventOccurrences, EventGuest
 from .enums import EventType
 from .services.guest_invitation_service import GuestInvitationService
@@ -52,17 +59,15 @@ class EventCreateSerializer(ModelSerializer):
 
         if event_type == EventType.INSTITUTIONAL and not user.is_staff:
             raise ValidationError(
-                {
-                    "detail": "Apenas administradores podem criar eventos institucionais."
-                }
+                {"detail": "Apenas administradores podem criar eventos institucionais."}
             )
-        
+
         if event_type == EventType.GROUP and group:
             if not group.group_members.filter(user=user).exists():
                 raise ValidationError({"detail": "Você não é membro deste grupo."})
 
         return attrs
-    
+
     def create(self, validated_data):
         guest_emails = validated_data.pop("guest_emails", [])
         event = Event.objects.create(**validated_data)
@@ -147,7 +152,7 @@ class EventPatchSerializer(ModelSerializer):
                 )
 
         return attrs
-    
+
     def update(self, instance, validated_data):
         guest_emails = validated_data.pop("guest_emails", None)
 
@@ -184,26 +189,28 @@ class EventPatchSerializer(ModelSerializer):
 
 
 class EventOccurrencesSerializer(ModelSerializer):
-    event_title = CharField(source='event.title', read_only=True)
-    event_description = CharField(source='event.description', read_only=True)
-    event_location = CharField(source='event.location', read_only=True)
-    event_type = CharField(source='event.event_type', read_only=True)
-    event_color = CharField(source='event.color', read_only=True)
-    creator_name = CharField(source='event.creator.name', read_only=True)
-    
+    event_id = IntegerField(source="event.id", read_only=True)
+    event_title = CharField(source="event.title", read_only=True)
+    event_description = CharField(source="event.description", read_only=True)
+    event_location = CharField(source="event.location", read_only=True)
+    event_type = CharField(source="event.event_type", read_only=True)
+    event_color = CharField(source="event.color", read_only=True)
+    creator_name = CharField(source="event.creator.name", read_only=True)
+
     class Meta:
         model = EventOccurrences
         fields = [
-            'id',
-            'event_title',
-            'event_description', 
-            'event_location',
-            'event_type',
-            'event_color',
-            'creator_name',
-            'occurrence_start',
-            'occurrence_end',
-            'cancelled',
-            'created_at',
-            'updated_at'
+            "id",
+            "event_id",
+            "event_title",
+            "event_description",
+            "event_location",
+            "event_type",
+            "event_color",
+            "creator_name",
+            "occurrence_start",
+            "occurrence_end",
+            "cancelled",
+            "created_at",
+            "updated_at",
         ]
