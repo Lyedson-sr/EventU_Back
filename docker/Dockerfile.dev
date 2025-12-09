@@ -20,4 +20,4 @@ COPY src/ ./src
 
 RUN uv sync --locked
 
-CMD ["sh", "-c", "uv run src/manage.py makemigrations && uv run src/manage.py migrate && uv run src/manage.py runserver 0.0.0.0:8000"]
+CMD ["sh", "-c", "uv run src/manage.py makemigrations && uv run src/manage.py migrate && uv run src/scripts/create_superuser.py && uv run src/manage.py runserver 0.0.0.0:8000"]

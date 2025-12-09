@@ -1,4 +1,3 @@
-# services/guest_invitation_service.py
 from django.core.mail import send_mass_mail
 from django.conf import settings
 from django.utils import timezone
