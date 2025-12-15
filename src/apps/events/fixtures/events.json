@@ -1,0 +1,415 @@
+[
+  {
+    "model": "events.event",
+    "pk": 1,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Ano Novo",
+      "description": "Feriado do Ano Novo",
+      "location": "Feriado",
+      "event_type": "institutional",
+      "start_datetime": "2026-01-01T00:00:00-03:00",
+      "end_datetime": "2026-01-01T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 2,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Recesso Acadêmico",
+      "description": "Recesso institucional",
+      "location": "Instituição",
+      "event_type": "institutional",
+      "start_datetime": "2026-01-02T00:00:00-03:00",
+      "end_datetime": "2026-01-02T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 3,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Término do Período 2025.2",
+      "description": "Término oficial do período 2025.2",
+      "location": "Instituição",
+      "event_type": "institutional",
+      "start_datetime": "2026-01-09T00:00:00-03:00",
+      "end_datetime": "2026-01-09T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 4,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Prazo final - Depósito TCC e Ata de Defesa",
+      "description": "Prazo final para depósito do TCC e ata de defesa na biblioteca",
+      "location": "Biblioteca",
+      "event_type": "institutional",
+      "start_datetime": "2026-01-12T00:00:00-03:00",
+      "end_datetime": "2026-01-12T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 5,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Férias / Recesso Acadêmico",
+      "description": "Período oficial de férias e recesso acadêmico",
+      "location": "Instituição",
+      "event_type": "institutional",
+      "start_datetime": "2026-01-12T00:00:00-03:00",
+      "end_datetime": "2026-02-18T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 6,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Matrícula - Alunos Veteranos (1ª fase)",
+      "description": "Matrícula de alunos veteranos - 1ª fase",
+      "location": "Secretaria Acadêmica",
+      "event_type": "institutional",
+      "start_datetime": "2026-01-20T00:00:00-03:00",
+      "end_datetime": "2026-01-21T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 7,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Ajuste de Matrículas - Alunos Veteranos (2ª fase)",
+      "description": "Ajuste de matrículas dos alunos veteranos - 2ª fase",
+      "location": "Secretaria Acadêmica",
+      "event_type": "institutional",
+      "start_datetime": "2026-01-27T00:00:00-03:00",
+      "end_datetime": "2026-01-28T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 8,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "São Sebastião (feriado municipal)",
+      "description": "Feriado municipal (Aracati e Itapipoca)",
+      "location": "Aracati / Itapipoca",
+      "event_type": "institutional",
+      "start_datetime": "2026-01-20T00:00:00-03:00",
+      "end_datetime": "2026-01-20T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 9,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Dia do Município de Iguatu",
+      "description": "Feriado municipal de Iguatu",
+      "location": "Iguatu",
+      "event_type": "institutional",
+      "start_datetime": "2026-01-25T00:00:00-03:00",
+      "end_datetime": "2026-01-25T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 10,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Evento Permanência, Cultura e Movimento",
+      "description": "Atividade acadêmica (Curso de Nutrição / CCS)",
+      "location": "Campus",
+      "event_type": "institutional",
+      "start_datetime": "2026-02-04T00:00:00-03:00",
+      "end_datetime": "2026-02-08T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 11,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Semana Pedagógica",
+      "description": "Semana pedagógica institucional",
+      "location": "Instituição",
+      "event_type": "institutional",
+      "start_datetime": "2026-02-11T00:00:00-03:00",
+      "end_datetime": "2026-02-20T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 12,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Matrículas - Alunos Veteranos (3ª fase)",
+      "description": "Matrículas dos alunos veteranos - 3ª fase",
+      "location": "Secretaria Acadêmica",
+      "event_type": "institutional",
+      "start_datetime": "2026-02-19T00:00:00-03:00",
+      "end_datetime": "2026-02-23T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 13,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Início do Período 2026.1",
+      "description": "Início oficial do período acadêmico 2026.1",
+      "location": "Instituição",
+      "event_type": "institutional",
+      "start_datetime": "2026-02-23T00:00:00-03:00",
+      "end_datetime": "2026-02-23T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 14,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Integração",
+      "description": "Atividades de integração (período inicial do semestre)",
+      "location": "Instituição",
+      "event_type": "institutional",
+      "start_datetime": "2026-02-23T00:00:00-03:00",
+      "end_datetime": "2026-02-25T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 15,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Submissão de Atividades Complementares (ACC)",
+      "description": "Período para submissão de ACC (SISACAD) - perfil discente",
+      "location": "SISACAD",
+      "event_type": "institutional",
+      "start_datetime": "2026-02-23T00:00:00-03:00",
+      "end_datetime": "2026-05-29T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 16,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Período para Avaliação das ACC (coordenações)",
+      "description": "Período para avaliação das ACC pela coordenação de curso",
+      "location": "Coordenações",
+      "event_type": "institutional",
+      "start_datetime": "2026-02-23T00:00:00-03:00",
+      "end_datetime": "2026-06-30T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 17,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Carnaval e Cinzas",
+      "description": "Período de Carnaval e Quarta-feira de Cinzas",
+      "location": "Instituição",
+      "event_type": "institutional",
+      "start_datetime": "2026-02-16T00:00:00-03:00",
+      "end_datetime": "2026-02-18T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 18,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Aniversário da FUNECE/UECE",
+      "description": "Data comemorativa institucional",
+      "location": "UECE",
+      "event_type": "institutional",
+      "start_datetime": "2026-03-05T00:00:00-03:00",
+      "end_datetime": "2026-03-05T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 19,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Dia Internacional da Mulher",
+      "description": "Data comemorativa internacional",
+      "location": "Instituição",
+      "event_type": "institutional",
+      "start_datetime": "2026-03-08T00:00:00-03:00",
+      "end_datetime": "2026-03-08T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 20,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "São José (feriado estadual)",
+      "description": "Feriado estadual - São José",
+      "location": "Ceará",
+      "event_type": "institutional",
+      "start_datetime": "2026-03-19T00:00:00-03:00",
+      "end_datetime": "2026-03-19T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 21,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Data Magna do Ceará",
+      "description": "Feriado estadual - Data Magna do Ceará",
+      "location": "Ceará",
+      "event_type": "institutional",
+      "start_datetime": "2026-03-25T00:00:00-03:00",
+      "end_datetime": "2026-03-25T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 22,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Solicitação de Aproveitamento de Estudos (DEG)",
+      "description": "Período para solicitação de aproveitamento de estudos",
+      "location": "DEG",
+      "event_type": "institutional",
+      "start_datetime": "2026-03-23T00:00:00-03:00",
+      "end_datetime": "2026-03-27T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  },
+
+  {
+    "model": "events.event",
+    "pk": 23,
+    "fields": {
+      "creator": 1,
+      "group": null,
+      "title": "Semana da Faculdade de Veterinária - FAVET",
+      "description": "Semana da FAVET",
+      "location": "FAVET",
+      "event_type": "institutional",
+      "start_datetime": "2026-03-23T00:00:00-03:00",
+      "end_datetime": "2026-03-27T23:59:59-03:00",
+      "color": "#3b82f6",
+      "created_at": "2025-12-11T12:00:00-03:00",
+      "updated_at": "2025-12-11T12:00:00-03:00"
+    }
+  }
+]

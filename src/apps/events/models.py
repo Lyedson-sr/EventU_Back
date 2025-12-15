@@ -21,9 +21,9 @@ class Event(Model):
     creator = ForeignKey(User, on_delete=CASCADE, related_name="created_events")
     group = ForeignKey(Group, on_delete=CASCADE, related_name="events", null=True, blank=True)
 
-    title = CharField(max_length=40)
+    title = CharField(max_length=80)
     description = TextField(blank=True)
-    location = CharField(max_length=40, blank=True)
+    location = CharField(max_length=40, null=True, blank=True)
 
     event_type = CharField(
         _("event type"),
